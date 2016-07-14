@@ -1,0 +1,389 @@
+<div class="CongesApplication">
+<h1>Liste des congés validés</h1>
+
+
+    <table id="legende" class="congesTable">
+        <tr>
+            <td class="dayNumCell absence"></td>
+            <td class="nameRow">Absence</td>
+
+            <td class="dayNumCell">
+                <span class="conges-left-arrow"></span>
+            </td>
+            <td class="nameRow">Matin</td>
+
+
+        </tr>
+
+        <tr>
+            <td class="dayNumCell conges"></td>
+            <td class="nameRow">Congés</td>
+            <td class="dayNumCell">
+                <span class="conges-right-arrow"></span>
+            </td>
+            <td class="nameRow">Après midi</td>
+        </tr>
+
+        <tr>
+            <td class="dayNumCell notWorked"></td>
+            <td class="nameRow">Week-end/Férié</td>
+
+        </tr>
+
+
+
+
+    <table
+
+
+    <table id="congesTable" class="congesTable">
+
+        <%
+
+            def date = startDate.clone();
+            def nbColYears = new LinkedHashMap<Integer,Integer>();
+            def nbColMonth = new LinkedHashMap<String,Integer>();
+
+
+            GregorianCalendar previousYear = startDate.clone();
+            previousYear.add(Calendar.YEAR,-1);
+            String previousYearInMillis = previousYear.getTimeInMillis();
+            GregorianCalendar nextYear = startDate.clone();
+            nextYear.add(Calendar.YEAR,1);
+            String nextYearInMillis = nextYear.getTimeInMillis();
+
+            GregorianCalendar previousMonth = startDate.clone();
+            previousMonth.add(Calendar.MONTH,-1);
+            String previousMonthInMillis = previousMonth.getTimeInMillis();
+
+            GregorianCalendar nextMonth = startDate.clone();
+            nextMonth.add(Calendar.MONTH,1);
+            String nextMonthInMillis = nextMonth.getTimeInMillis();
+
+            while (date <= endDate) {
+
+                def year = date.get(Calendar.YEAR);
+                def month = date.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.FRANCE);
+
+                def currentYearNbCol = 1;
+                if (nbColYears.containsKey(year)) {
+                    currentYearNbCol = nbColYears.get(year)+1;
+                }
+                nbColYears.put(year,currentYearNbCol);
+
+                def currentMonthNbCol = 1;
+                if (nbColMonth.containsKey(month)) {
+                    currentMonthNbCol = nbColMonth.get(month)+1;
+                }
+                nbColMonth.put(month,currentMonthNbCol);
+                date.add(Calendar.DAY_OF_MONTH,1);
+            }
+
+        %>
+
+
+        <tr class="yearLine">
+            <td class="nameRow"></td>
+        <%
+            int i=0;
+            for (Integer key : nbColYears.keySet()) {
+                def value = nbColYears.get(key);
+
+        %>
+                <td colspan="${value}">
+        <%
+                    if (i==0) {
+        %>
+                        <a class="btn" id="leftYear" href="@{updateDate(startDateInMillis = previousYearInMillis)}"><i class="uiIconArrowLeft"></i>Précédent</a>
+        <%
+                    }
+        %>
+                    ${key}
+        <%
+                    if (i==nbColYears.size()-1) {
+        %>
+                        <a class="btn" id="rightYear" href="@{updateDate(startDateInMillis = nextYearInMillis)}">Suivant<i class="uiIconArrowRight"></i></a>
+        <%
+                    }
+                    i++;
+        %>
+                </td>
+        <%
+
+            }
+
+        %>
+
+        </tr>
+        <tr class="monthLine">
+            <td class="nameRow"></td>
+            <%
+                int  j=0
+                for (String key : nbColMonth.keySet()) {
+                    def value = nbColMonth.get(key);
+
+                %>
+                        <td colspan="${value}">
+                <%
+                            if (j==0) {
+                %>
+                                <a class="btn" id="leftMonth" href="@{updateDate(startDateInMillis = previousMonthInMillis)}"><i class="uiIconArrowLeft"></i>Précédent</a>
+                <%
+                            }
+                %>
+                            ${key}
+                <%
+                            if (j==nbColMonth.size()-1) {
+                %>
+                                <a class="btn" id="rightMonth" href="@{updateDate(startDateInMillis = nextMonthInMillis)}">Suivant<i class="uiIconArrowRight"></i></a>
+                <%
+                            }
+                            j++;
+                %>
+                        </td>
+                <%
+
+                }
+
+            %>
+
+        </tr>
+
+
+        <tr class="dayNumLine">
+            <td class="nameRow"></td>
+        <%
+            date = startDate.clone();
+            while (date <= endDate) {
+
+
+                def clazz="dayNumCell";
+
+
+        %>
+                <td class="${clazz}" id="${date.get(Calendar.DAY_OF_MONTH)}-${date.get(Calendar.MONTH)}-${date.get(Calendar.YEAR)}">${date.get(Calendar.DAY_OF_MONTH)}</td>
+        <%
+                date.add(Calendar.DAY_OF_MONTH,1);
+            }
+
+        %>
+
+        </tr>
+        <%
+            usernames.keySet().each { current ->
+
+        %>
+                <tr class="userLine" id="${current}Line">
+                    <td class="userNameCell" id="${current}Cell">${usernames.get(current)}</td>
+        <%
+                    date = startDate.clone();
+                    while (date <= endDate) {
+                        def clazz="userDayCell";
+                        if (date.get(Calendar.DAY_OF_WEEK).equals(Calendar.SUNDAY)||date.get(Calendar.DAY_OF_WEEK).equals(Calendar.SATURDAY)) {
+                            clazz=clazz+" notWorked";
+                        }
+
+        %>
+                        <td class="${clazz}" id="${current}-${date.get(Calendar.DAY_OF_MONTH)}-${date.get(Calendar.MONTH)}-${date.get(Calendar.YEAR)}"></td>
+        <%
+                        date.add(Calendar.DAY_OF_MONTH,1);
+                    }
+        %>
+                </tr>
+        <%
+            }
+        %>
+
+    </table>
+
+
+
+
+    <script type="text/javascript">
+        require(['SHARED/jquery'], function($){
+
+            $("#leftYear").click(function() {
+
+            });
+            $("#rightYear").click(function() {
+
+            });
+            $("#leftMonth").click(function() {
+
+            });
+            $("#rightMonth").click(function() {
+
+            });
+            var startDateMillis="${startDate.getTimeInMillis()}";
+            var endDateMillis="${endDate.getTimeInMillis()}";
+            var startDatePeriod=new Date();
+            startDatePeriod.setTime(startDateMillis);
+            var endDatePeriod=new Date();
+            endDatePeriod.setTime(endDateMillis);
+            // Récupération des jours fériés
+
+            var joursFeries = [];
+            for (i = startDatePeriod.getFullYear(); i <= endDatePeriod.getFullYear(); i++) {
+                joursFeries=joursFeries.concat(getJourFeries(i));
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/rest/conges/getByDateGroupByUsers/"+startDateMillis+"/"+endDateMillis,
+                dataType: "json",
+                success: function(data){
+                    $.each(data, function(key,value) {
+                        var username=key;
+                        var escapedUsername  = username.replace(".","\\\\.");
+
+
+                        for (i=0;i<joursFeries.length;i++) {
+
+                            var jour=new Date();
+                            jour.setTime(joursFeries[i]);
+                            var identifier="#"+escapedUsername+"-"+jour.getDate()+"-"+jour.getMonth()+"-"+jour.getFullYear();
+                            $(identifier).addClass("notWorked");
+
+                        }
+
+                        for(var val in value)
+                        {
+                            var startDate=new Date();
+                            startDate.setTime(value[val].startDate);
+                            var endDate=new Date();
+                            endDate.setTime(value[val].endDate);
+
+                            var congesType = "";
+                            if (value[val].type.indexOf("congés") == -1) {
+                                clazz="absence";
+                            } else {
+                                clazz="conges";
+                            }
+
+                            var reason=value[val].reason;
+
+                            if (value[val].nbDays==0.5) {
+                                if(value[val].oneDayHalf=="Matin") {
+                                    var identifier="#"+escapedUsername+"-"+startDate.getDate()+"-"+startDate.getMonth()+"-"+startDate.getFullYear();
+                                    $(identifier).append("<span class='"+clazz+"-left-arrow' title='"+reason+"'></span>");
+                                } else {
+                                    var identifier="#"+escapedUsername+"-"+startDate.getDate()+"-"+startDate.getMonth()+"-"+startDate.getFullYear();
+                                    $(identifier).append("<span class='"+clazz+"-right-arrow' title='"+reason+"'></span>");
+
+                                }
+                            } else {
+
+                                if (value[val].isEndDayHalf) {
+                                    endDate=new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate()-1);
+
+                                }
+
+                                if (value[val].isFirstDayHalf) {
+
+                                    var identifier="#"+escapedUsername+"-"+startDate.getDate()+"-"+startDate.getMonth()+"-"+startDate.getFullYear();
+                                    $(identifier).append("<span class='"+clazz+"-right-arrow' title='"+reason+"'></span>");
+                                    startDate=new Date(startDate.getFullYear(),startDate.getMonth(),startDate.getDate()+1);
+                                }
+
+                                while (startDate<=endDate) {
+                                    var identifier="#"+escapedUsername+"-"+startDate.getDate()+"-"+startDate.getMonth()+"-"+startDate.getFullYear();
+                                    $(identifier).addClass(clazz);
+                                    $(identifier).attr('title', reason);
+                                    startDate=new Date(startDate.getFullYear(),startDate.getMonth(),startDate.getDate()+1);
+
+                                }
+
+                                if (value[val].isEndDayHalf) {
+                                        var identifier="#"+escapedUsername+"-"+startDate.getDate()+"-"+startDate.getMonth()+"-"+startDate.getFullYear();
+                                        $(identifier).append("<span class='"+clazz+"-left-arrow' title='"+reason+"'></span>");
+                                        startDate=new Date(startDate.getFullYear(),startDate.getMonth(),startDate.getDate()+1);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+
+
+            function calculLundiPaques(annee) {
+            		var a = Math.floor(annee / 100);
+            		var b = annee % 100;
+            		var c = Math.floor((3 * (a + 25)) / 4);
+            		var d = (3 * (a + 25)) % 4;
+            		var e = Math.floor((8 * (a + 11)) / 25);
+            		var f = (5 * a + b) % 19;
+            		var g = (19 * f + c - e) % 30;
+            		var h = Math.floor((f + 11 * g) / 319);
+            		var j = Math.floor((60 * (5 - d) + b) / 4);
+            		var k = (60 * (5 - d) + b) % 4;
+            		var m = (2 * j - k - g + h) % 7;
+            		var n = Math.floor((g - h + m + 114) / 31);
+            		var p = (g - h + m + 114) % 31;
+            		var jour = p + 1;
+            		var mois = n;
+
+
+            		var date = new Date(annee, mois-1 , jour);
+            		var nextday=new Date(date.getFullYear(),date.getMonth(),date.getDate()+1);
+            		return nextday;
+            	}
+
+
+            function getJourFeries(annee) {
+            		var datesFeries = [];
+
+            		// Jour de l'an
+            		var jourAn = new Date(annee, 0, 1);
+            		datesFeries.push(jourAn.getTime());
+
+            		// Lundi de paques
+            		var paques = calculLundiPaques(annee);
+            		datesFeries.push(paques.getTime());
+
+            		// Fete du travail
+            		var premierMai = new Date(annee, 4, 1);
+            		datesFeries.push(premierMai.getTime());
+
+            		// 8 mai
+            		var huitMai = new Date(annee, 4, 8);
+            		datesFeries.push(huitMai.getTime());
+
+            		// Ascension (= pâques + 38 jours)
+            		var ascension=new Date(paques.getFullYear(),paques.getMonth(),paques.getDate()+38);
+            		datesFeries.push(ascension.getTime());
+
+            		// Pentecôte (= pâques + 49 jours)
+            		var pentecote=new Date(paques.getFullYear(),paques.getMonth(),paques.getDate()+49);
+            		datesFeries.push(pentecote.getTime());
+
+            		// Fête Nationale
+            		var quatorzeJuillet = new Date(annee, 6, 14);
+            		datesFeries.push(quatorzeJuillet.getTime());
+
+            		// Assomption
+            		var assomption = new Date(annee, 7, 15);
+            		datesFeries.push(assomption.getTime());
+
+            		// La Toussaint
+            		var toussaint = new Date(annee, 10, 1);
+            		datesFeries.push(toussaint.getTime());
+
+            		// L'Armistice
+            		var armistice = new Date(annee, 10, 11);
+            		datesFeries.push(armistice.getTime());
+
+            		// Noël
+            		var noel = new Date(annee, 11, 25);
+            		datesFeries.push(noel.getTime());
+
+            		return datesFeries;
+            	}
+        });
+
+    </script>
+
+
+
+
+</div>

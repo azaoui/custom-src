@@ -1,0 +1,18 @@
+<tr id="${username}-tr">
+                <td>${displayName}</td>
+                <td>${solde}</td>
+    <%
+                if (isValidator) {
+    %>
+                    <td>Oui</td>
+    <%
+                }else{
+    %>
+                    <td>Non</td>
+    <%
+                }
+    %>
+
+                <td></td>
+
+            </tr>

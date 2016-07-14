@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+        xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+
+
+
+    <component>
+        <key>org.exoplatform.services.CongesService</key>
+        <type>org.exoplatform.services.CongesService</type>
+    </component>
+
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.database.HibernateService</target-component>
+        <component-plugin>
+            <name>add.hibernate.annotations</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.services.database.impl.AddHibernateMappingPlugin</type>
+            <init-params>
+                <values-param>
+                    <name>hibernate.annotations</name>
+                    <value>org.exoplatform.hibernate.model.Conges</value>
+                    <value>org.exoplatform.hibernate.model.CongesAdministration</value>
+                </values-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+</configuration>

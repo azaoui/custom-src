@@ -1,0 +1,81 @@
+
+.congesTable{
+    border:1px solid black;
+    text-align: center;
+    margin:0 20px;
+    width:auto;
+    margin-bottom:20px;
+
+
+    #leftYear, #leftMonth{
+        float:left;
+    }
+    #rightYear, #rightMonth{
+        float:right;
+    }
+    td.nameRow{
+        width:150px;
+    }
+
+    td.conges{
+        background-color:darkolivegreen;
+
+
+    }
+
+    td.absence{
+        background-color:orangered;
+    }
+    td.notWorked{
+        background-color:darkgrey;
+    }
+
+    tr.yearLine {
+        font-weight:bold;
+    }
+
+    tr.monthLine {
+        font-weight:bold;
+    }
+    span.conges-right-arrow {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        border-bottom: 20px solid darkolivegreen;
+        border-left: 20px solid transparent;
+    }
+    span.conges-left-arrow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-top: 20px solid darkolivegreen;
+        border-right: 20px solid transparent;
+    }
+
+    span.absence-right-arrow {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        border-bottom: 20px solid orangered;
+        border-left: 20px solid transparent;
+    }
+    span.absence-left-arrow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-top: 20px solid orangered;
+        border-right: 20px solid transparent;
+    }
+
+    td{
+        position:relative;
+        border:1px solid black;
+    }
+
+    td.dayNumCell{
+        width:20px;
+    }
+
+    td.userDayCell{
+    }
+}

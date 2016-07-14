@@ -1,0 +1,125 @@
+<%
+    import org.exoplatform.hibernate.model.CongesAdministration;
+
+%>
+
+<div class="CongesAdministrationApplication">
+<h1>Administration des congés</h1>
+<form id="editUser" class="form-horizontal hide" action="@{editUser()}" method="post">
+        <div class="control-group">
+            <label for="inputUsername" class="control-label">Nom d'utilisateur : </label>
+            <div class="controls">
+                <span id="spanUsername"></span>
+                <input type="hidden" id="inputUsername" name="inputUsername" value="">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label for="inputSolde" class="control-label">Solde Congés : </label>
+            <div class="controls">
+                <input type="text" id="inputSolde" name="inputSolde">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label for="inputValidator" class="control-label">Validateur : </label>
+            <div class="controls">
+                <input type="checkbox" id="inputValidator" name="inputValidator">
+            </div>
+        </div>
+        <div class="control-group">
+        			<div class="controls">
+        				<button type="submit" class="btn btn-primary" id="register">Enregistrer</button>
+        				<button type="button" class="btn btn-default" id="cancel">Annuler</button>
+        	        </div>
+        </div>
+	</form>
+
+<table id="congesAdministration">
+    <tr>
+        <th>Utilisateur</th>
+        <th>Solde</th>
+        <th>Validateur</th>
+        <th>Action</th>
+    </tr>
+    <%
+        usernames.keySet().each { current ->
+            def username=current;
+            CongesAdministration congesAdministration = congesAdministrations.get(current);
+            def solde = 0;
+            def isValidator = false;
+            def displayName=usernames.get(current);
+            if (congesAdministration!=null) {
+                solde = congesAdministration.getRemainingDays();
+                isValidator = congesAdministration.isValidator();
+            }
+    %>
+            <tr id="${username}-tr">
+                <td id="${username}-td-displayName">${displayName}</td>
+                <td id="${username}-td-solde">${solde}</td>
+    <%
+                if (isValidator) {
+    %>
+                    <td id="${username}-td-isValidator">Oui</td>
+    <%
+                }else{
+    %>
+                    <td id="${username}-td-isValidator">Non</td>
+    <%
+                }
+    %>
+
+                <td><a class="btn" id="action-${username}">Editer</a></td>
+
+            </tr>
+
+    <%
+
+
+
+        }
+
+    %>
+</table>
+
+
+
+
+ <script type="text/javascript">
+        require(['SHARED/jquery', 'SHARED/juzu-ajax'], function($){
+            $("[id^='action']").click(function() {
+                var username = $(this).attr("id").substring(7);
+                var escapedUsername  = username.replace(".","\\\\.");
+                var displayName=$("#"+escapedUsername+"-td-displayName").text();
+                var solde=$("#"+escapedUsername+"-td-solde").text();
+                var isValidatorText = $("#"+escapedUsername+"-td-isValidator").text()
+                var isValidator = false;
+                if (isValidatorText == "Oui") {
+                    isValidator=true;
+                }
+
+                $("#editUser").find('#inputUsername').val(username);
+                $("#editUser").find('#spanUsername').text(displayName);
+                $("#editUser").find('#inputSolde').val(solde);
+                if (isValidator) {
+                    $("#editUser").find('#inputValidator').prop('checked', true);
+                } else {
+                    $("#editUser").find('#inputValidator').prop('checked', false);
+                }
+
+                $("#editUser").show();
+
+            });
+
+            $("#cancel").click(function(){
+                $("#editUser").hide();
+            });
+
+        });
+
+    </script>
+
+
+
+
+</div>

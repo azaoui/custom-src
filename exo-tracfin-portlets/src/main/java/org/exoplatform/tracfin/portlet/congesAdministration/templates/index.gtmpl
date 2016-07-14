@@ -15,12 +15,27 @@
         </div>
 
         <div class="control-group">
-            <label for="inputSolde" class="control-label">Solde Congés : </label>
+            <label for="inputSoldeConge" class="control-label">Solde Congés : </label>
             <div class="controls">
-                <input type="text" id="inputSolde" name="inputSolde">
+                <input type="text" id="inputSoldeConge" name="inputSoldeConge">
             </div>
         </div>
-
+        
+         <div class="control-group">
+            <label for="inputSoldeCetPerenne" class="control-label">Solde Cet Pèrenne : </label>
+            <div class="controls">
+                <input type="text" id="inputSoldeCetPerenne" name="inputSoldeCetPerenne">
+            </div>
+        </div>
+         
+         
+          <div class="control-group">
+            <label for="inputSoldeCetHistorique" class="control-label">Solde Cet Historique : </label>
+            <div class="controls">
+                <input type="text" id="inputSoldeCetHistorique" name="inputSoldeCetHistorique">
+            </div>
+        </div>
+         
         <div class="control-group">
             <label for="inputValidator" class="control-label">Validateur : </label>
             <div class="controls">
@@ -38,7 +53,9 @@
 <table id="congesAdministration">
     <tr>
         <th>Utilisateur</th>
-        <th>Solde</th>
+        <th>Solde Congés</th>
+        <th>Solde CET Perenne</th>
+        <th>Solde CET Historique</th>
         <th>Validateur</th>
         <th>Action</th>
     </tr>
@@ -46,17 +63,24 @@
         usernames.keySet().each { current ->
             def username=current;
             CongesAdministration congesAdministration = congesAdministrations.get(current);
-            def solde = 0;
+            def soldeConge = 0;
+            def soldeCetPerenne = 0;
+            def soldeCetHistorique = 0;
             def isValidator = false;
             def displayName=usernames.get(current);
             if (congesAdministration!=null) {
-                solde = congesAdministration.getRemainingDays();
+                soldeConge = congesAdministration.getSoldeConge();
+                soldeCetPerenne = congesAdministration.getSoldeCetPerenne();
+                soldeCetHistorique = congesAdministration.getSoldeCetHistorique();
                 isValidator = congesAdministration.isValidator();
             }
     %>
             <tr id="${username}-tr">
                 <td id="${username}-td-displayName">${displayName}</td>
-                <td id="${username}-td-solde">${solde}</td>
+                <td id="${username}-td-soldeConge">${soldeConge}</td>
+                <td id="${username}-td-soldeCetPerenne">${soldeCetPerenne}</td>
+                 <td id="${username}-td-soldeCetHistorique">${soldeCetHistorique}</td>
+                
     <%
                 if (isValidator) {
     %>
@@ -91,7 +115,9 @@
                 var username = $(this).attr("id").substring(7);
                 var escapedUsername  = username.replace(".","\\\\.");
                 var displayName=$("#"+escapedUsername+"-td-displayName").text();
-                var solde=$("#"+escapedUsername+"-td-solde").text();
+                var soldeConge=$("#"+escapedUsername+"-td-soldeConge").text();
+                var soldeCetPerenne=$("#"+escapedUsername+"-td-soldeCetPerenne").text();
+                var soldeCetHistorique=$("#"+escapedUsername+"-td-soldeCetHistorique").text();
                 var isValidatorText = $("#"+escapedUsername+"-td-isValidator").text()
                 var isValidator = false;
                 if (isValidatorText == "Oui") {
@@ -100,7 +126,9 @@
 
                 $("#editUser").find('#inputUsername').val(username);
                 $("#editUser").find('#spanUsername').text(displayName);
-                $("#editUser").find('#inputSolde').val(solde);
+                $("#editUser").find('#inputSoldeConge').val(soldeConge);
+                 $("#editUser").find('#inputSoldeCetPerenne').val(soldeCetPerenne);
+                  $("#editUser").find('#inputSoldeCetHistorique').val(soldeCetHistorique);
                 if (isValidator) {
                     $("#editUser").find('#inputValidator').prop('checked', true);
                 } else {

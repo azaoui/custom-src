@@ -1,6 +1,8 @@
 <tr id="${username}-tr">
                 <td>${displayName}</td>
-                <td>${solde}</td>
+                <td>${soldeConge}</td>
+                <td>${soldeCetPerenne}</td>
+                <td>${soldeCetHistorique}</td>
     <%
                 if (isValidator) {
     %>

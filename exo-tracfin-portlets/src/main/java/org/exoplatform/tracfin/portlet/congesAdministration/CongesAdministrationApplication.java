@@ -62,14 +62,16 @@ public class CongesAdministrationApplication {
 
     @Action
     @Route("/editUser")
-    public void editUser(String inputUsername, String inputSolde, String inputValidator) throws Exception {
+    public void editUser(String inputUsername, String inputSoldeConge,String inputSoldeCetPerenne, String inputSoldeCetHistorique, String inputValidator) throws Exception {
 
         List<CongesAdministration> congesAdministrations = congesService.getCongesAdministrationByUsername(inputUsername);
         if (congesAdministrations.size() == 0) {
-            congesService.createCongesAdministration(inputUsername,new Double(inputSolde),!(inputValidator == null ||!inputValidator.equals("on")));
+            congesService.createCongesAdministration(inputUsername,new Double(inputSoldeConge),new Double(inputSoldeCetPerenne),new Double(inputSoldeCetHistorique),!(inputValidator == null ||!inputValidator.equals("on")));
         } else {
             CongesAdministration congesAdministration = congesAdministrations.get(0);
-            congesAdministration.setRemainingDays(new Double(inputSolde));
+            congesAdministration.setSoldeConge(new Double(inputSoldeConge));
+            congesAdministration.setSoldeCetPerenne(new Double(inputSoldeCetPerenne));
+            congesAdministration.setSoldeCetHistorique(new Double(inputSoldeCetHistorique));
             if (inputValidator == null || !inputValidator.equals("on")) {
                 congesAdministration.setValidator(false);
             } else {

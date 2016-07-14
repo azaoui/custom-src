@@ -21,7 +21,11 @@ public class CongesAdministration {
 
     private boolean isValidator;
 
-    private double remainingDays;
+    private double soldeConge;
+    
+    private double soldeCetPerenne;
+    
+    private double soldeCetHistorique;
 
 
 
@@ -49,11 +53,28 @@ public class CongesAdministration {
         this.id = id;
     }
 
-    public double getRemainingDays() {
-        return remainingDays;
+    public double getSoldeConge() {
+        return soldeConge;
     }
 
-    public void setRemainingDays(double remainingDays) {
-        this.remainingDays = remainingDays;
+    public void setSoldeConge(double soldeConge) {
+        this.soldeConge = soldeConge;
     }
+
+	public double getSoldeCetPerenne() {
+		return soldeCetPerenne;
+	}
+
+	public void setSoldeCetPerenne(double soldeCetPerenne) {
+		this.soldeCetPerenne = soldeCetPerenne;
+	}
+
+	public double getSoldeCetHistorique() {
+		return soldeCetHistorique;
+	}
+
+	public void setSoldeCetHistorique(double soldeCetHistorique) {
+		this.soldeCetHistorique = soldeCetHistorique;
+	}
+
 }

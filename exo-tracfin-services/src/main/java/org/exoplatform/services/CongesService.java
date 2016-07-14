@@ -7,6 +7,8 @@ import org.exoplatform.hibernate.dao.CongesDAO;
 import org.exoplatform.hibernate.model.Conges;
 import org.exoplatform.hibernate.model.CongesAdministration;
 import org.exoplatform.services.database.HibernateService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import org.json.JSONObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
@@ -23,7 +26,8 @@ import java.util.*;
  */
 @Path("/conges/")
 public class CongesService implements ResourceContainer {
-
+	
+	  private static final Log LOG = ExoLogger.getLogger(CongesService.class);
     private CongesDAO congesDAO;
 
     private CongesAdministrationDAO congesAdministrationDAO;
@@ -61,7 +65,7 @@ public class CongesService implements ResourceContainer {
             if (congesObject.getType().contains("congés")) {
                 ListAccess<CongesAdministration> congesAdmins = congesAdministrationDAO.findCongesAdministrationByUser(congesObject.getUserName());
                 CongesAdministration congesAdmin = congesAdmins.load(0, 1)[0];
-                congesAdmin.setRemainingDays(congesAdmin.getRemainingDays() - congesObject.getNbDays());
+                congesAdmin.setSoldeConge(congesAdmin.getSoldeConge() - congesObject.getNbDays());
                 congesAdministrationDAO.saveConges(congesAdmin);
 
             }
@@ -193,18 +197,51 @@ public class CongesService implements ResourceContainer {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSolde(@PathParam("username") String username) throws Exception {
         try {
-
-
-            System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-System.out.println(username);
-System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
             List<CongesAdministration> administrations=getCongesAdministrationByUsername(username);
             Double result = new Double(0);
             if (administrations.size() != 0) {
-                result=administrations.get(0).getRemainingDays();
-                              System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-System.out.println(result);
-System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                result=administrations.get(0).getSoldeConge();
+                LOG.info("Le solde de congé de "+username+": est: "+result);
+            }
+            return Response.ok(result.toString(), MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*")
+      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
+        } catch (Exception e) {
+            return Response.status(HTTPStatus.INTERNAL_ERROR).build();
+        }
+    }
+    
+    
+    @GET
+    @Path("/getSoldeCetPerenne/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSoldeCetPerenne(@PathParam("username") String username) throws Exception {
+        try {
+            List<CongesAdministration> administrations=getCongesAdministrationByUsername(username);
+            Double result = new Double(0);
+            if (administrations.size() != 0) {
+                result=administrations.get(0).getSoldeCetPerenne();
+                LOG.info("Le solde Cet Perenne de "+username+": est: "+result);
+            }
+            return Response.ok(result.toString(), MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*")
+      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
+        } catch (Exception e) {
+            return Response.status(HTTPStatus.INTERNAL_ERROR).build();
+        }
+    }
+    
+    
+    @GET
+    @Path("/getSoldeCetHistorique/{username}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSoldeCET(@PathParam("username") String username) throws Exception {
+        try {
+            List<CongesAdministration> administrations=getCongesAdministrationByUsername(username);
+            Double result = new Double(0);
+            if (administrations.size() != 0) {
+                result=administrations.get(0).getSoldeCetHistorique();
+                LOG.info("Le solde Cet Historique de "+username+": est: "+result);
             }
             return Response.ok(result.toString(), MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*")
       .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
@@ -241,11 +278,13 @@ System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         congesAdministrationDAO.saveConges(congesAdministration);
     }
 
-    public CongesAdministration createCongesAdministration(String username, double solde, boolean isValidator) throws Exception {
+    public CongesAdministration createCongesAdministration(String username, double soldeConge,double soldeCetPerenne, double soldeCetHistorique, boolean isValidator) throws Exception {
         try {
 
             CongesAdministration congesAdministration=congesAdministrationDAO.createCongesInstance();
-            congesAdministration.setRemainingDays(solde);
+            congesAdministration.setSoldeConge(soldeConge);
+            congesAdministration.setSoldeCetPerenne(soldeCetPerenne);
+            congesAdministration.setSoldeCetHistorique(soldeCetHistorique);
             congesAdministration.setValidator(isValidator);
             congesAdministration.setUsername(username);
             congesAdministrationDAO.createConges(congesAdministration);

@@ -1,0 +1,31 @@
+
+    <div class="row text-left">
+      <div class="col-xs-6">
+        
+        
+        <a href ng-click="goSoldes = !goSoldes" class="btn btn-info">Consulter mes soldes de congés</a>
+      </div>
+      
+      <div class="col-xs-6">
+
+        <div class="container" ng-show="goSoldes">          
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Congé annuel</th>
+        <th>CET Prénne</th>
+        <th>CET Historique</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{solde}}</td>
+        <td>{{soldePrenne}}</td>
+        <td>{{soldeHistorique}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+        
+      </div>
+    </div>

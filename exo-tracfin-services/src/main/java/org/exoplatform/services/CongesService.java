@@ -65,7 +65,16 @@ public class CongesService implements ResourceContainer {
             if (congesObject.getType().contains("congés")) {
                 ListAccess<CongesAdministration> congesAdmins = congesAdministrationDAO.findCongesAdministrationByUser(congesObject.getUserName());
                 CongesAdministration congesAdmin = congesAdmins.load(0, 1)[0];
-                congesAdmin.setSoldeConge(congesAdmin.getSoldeConge() - congesObject.getNbDays());
+                if(congesObject.getReason().contains("pérenne")){
+                     congesAdmin.setSoldeCetPerenne(congesAdmin.getSoldeCetPerenne() - congesObject.getNbDays());
+                }
+                if(congesObject.getReason().contains("historique")){
+                     congesAdmin.setSoldeCetHistorique(congesAdmin.getSoldeCetHistorique() - congesObject.getNbDays());
+                }
+                if(congesObject.getReason().contains("ordinaires")){
+                    congesAdmin.setSoldeConge(congesAdmin.getSoldeConge() - congesObject.getNbDays());
+               }
+
                 congesAdministrationDAO.saveConges(congesAdmin);
 
             }

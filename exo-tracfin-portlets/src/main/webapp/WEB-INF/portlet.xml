@@ -26,6 +26,10 @@
     <portlet-name>CongesAdministrationApplication</portlet-name>
     <display-name xml:lang="EN">Conges Administration Application</display-name>
     <portlet-class>org.exoplatform.tracfin.portlet.congesAdministration.CongesAdministrationApplicationPortlet</portlet-class>
+	<init-param>
+		<name>juzu.run_mode</name>
+		<value>dev</value>
+	</init-param>
     <supports>
       <mime-type>text/html</mime-type>
       <portlet-mode>edit</portlet-mode>

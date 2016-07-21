@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<gatein-resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.gatein.org/xml/ns/gatein_resources_1_3 http://www.gatein.org/xml/ns/gatein_resources_1_3"
+  xmlns="http://www.gatein.org/xml/ns/gatein_resources_1_3">
+  
+  <portal-skin>
+    <skin-name>Default</skin-name>
+    <skin-module>datatableui</skin-module>
+    <css-path>/css/datatable_jui.css</css-path>
+    <css-priority>1</css-priority>
+  </portal-skin>
+
+  <portal-skin>
+    <skin-name>Default</skin-name>
+    <skin-module>jqueryui</skin-module>
+    <css-path>/css/themes/smoothness/jquery-ui-1.8.4.custom.css</css-path>
+    <css-priority>1</css-priority>
+  </portal-skin>
+
+  <portlet-skin>
+    <application-name>CongesAdministrationApplication</application-name>
+    <portlet-name>CongesAdministrationApplication</portlet-name>
+    <skin-name>Default</skin-name>
+    <css-path>/css/datatable.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+  
+  
+  
+  <portlet>
+    <name>CongesAdministrationApplication</name>
+    <module>
+      <depends>
+        <module>congeAdmin</module>
+      </depends>
+      <depends>
+        <module>jQueryDatatables</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+      </depends>
+    </module>
+  </portlet>
+
+
+
+  <module>
+    <name>congeAdmin</name>
+    <script>
+      <path>/js/CongesAdministration/congeAdmin.js</path>
+    </script>
+    <depends>
+      <module>jQueryDatatables</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+  </module>
+
+  <module>
+    <name>jQueryDatatables</name>
+    <script>
+      <adapter>
+        (function() {
+        <include>/js/CongesAdministration/dataTables-min.js</include>
+        return jQuery.noConflict(true);
+        })();
+      </adapter>
+    </script>
+    <depends>
+      <module>jquery</module>
+      <as>jQuery</as>
+    </depends>
+  </module>
+</gatein-resources>

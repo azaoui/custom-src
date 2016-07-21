@@ -28,7 +28,7 @@
         @Stylesheet(value = "/org/exoplatform/tracfin/portlet/congesAdministration/assets/congesAdmin.css", location = AssetLocation.APPLICATION)
 })
 @Scripts({
-    @Script(id = "jquery", value = "js/jquery-1.8.3.min.js", location = AssetLocation.SERVER)
+   // @Script(id = "jquery", value = "js/jquery-1.8.3.min.js", location = AssetLocation.SERVER)
 })
 @Less(value = {"congesAdmin.less"})
 @Assets("*")

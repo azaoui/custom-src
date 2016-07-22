@@ -43,23 +43,36 @@
             </div>
         </div>
         <div class="control-group">
-        			<div class="controls">
-        				<button type="submit" class="btn btn-primary" id="register">Enregistrer</button>
-        				<button type="button" class="btn btn-default" id="cancel">Annuler</button>
-        	        </div>
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary" id="register">Enregistrer</button>
+                        <button type="button" class="btn btn-default" id="cancel">Annuler</button>
+                    </div>
         </div>
-	</form>
+    </form>
 
-<table id="congesAdministration">
-    <tr>
-        <th>Utilisateur</th>
-        <th>Solde Congés</th>
-        <th>Solde CET Perenne</th>
-        <th>Solde CET Historique</th>
-        <th>Validateur</th>
-        <th>Action</th>
-    </tr>
-    <%
+<table id="congesAdministration" border="1">
+        <thead>
+            <tr>
+                <th>Utilisateur</th>
+                <th>Solde Congés</th>
+                <th>Solde CET Pérenne</th>
+                <th>Solde CET Historique</th>
+                <th>Validateur</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Utilisateur</th>
+                <th>Solde Congés</th>
+                <th>Solde CET Pérenne</th>
+                <th>Solde CET Historique</th>
+                <th>Validateur</th>
+                <th>Action</th>
+            </tr>
+        </tfoot>
+         <tbody>
+ <%
         usernames.keySet().each { current ->
             def username=current;
             CongesAdministration congesAdministration = congesAdministrations.get(current);
@@ -74,7 +87,8 @@
                 soldeCetHistorique = congesAdministration.getSoldeCetHistorique();
                 isValidator = congesAdministration.isValidator();
             }
-    %>
+    %>        
+       
             <tr id="${username}-tr">
                 <td id="${username}-td-displayName">${displayName}</td>
                 <td id="${username}-td-soldeConge">${soldeConge}</td>
@@ -104,12 +118,11 @@
         }
 
     %>
-</table>
+        </tbody>
+    </table>
 
 
-
-
- <script type="text/javascript">
+<script type="text/javascript">
         require(['SHARED/jquery', 'SHARED/juzu-ajax'], function($){
             $("[id^='action']").click(function() {
                 var username = $(this).attr("id").substring(7);
@@ -151,3 +164,4 @@
 
 
 </div>
+    

@@ -27,4 +27,26 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+    
+     <external-component-plugins>
+        <target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
+        <component-plugin>
+            <name>add.salesforce.activity.plugin</name>
+            <set-method>registerUIExtensionPlugin</set-method>
+            <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+            <init-params>
+                <object-param>
+                    <name>Bonita Conge Activity</name>
+                    <object type="org.exoplatform.social.webui.activity.UIActivityExtension">
+                        <field name="type"><string>org.exoplatform.social.webui.activity.BaseUIActivity</string></field>
+                        <field name="name"><string>BONITA_ACTIVITY</string></field>
+                        <field name="component"><string>org.exoplatform.component.activity.UIBonitaActivity</string></field>
+                        <field name="activityBuiderClass"><string>org.exoplatform.component.activity.UIBonitaActivityBuilder</string></field>
+                    </object>
+                </object-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    
+    
 </configuration>

@@ -58,6 +58,22 @@
       <artifactId>commons-api</artifactId>
       <version>${org.exoplatform.commons.version}</version>
     </dependency>
+        <dependency>
+      <groupId>org.exoplatform.social</groupId>
+      <artifactId>social-component-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.social</groupId>
+      <artifactId>social-component-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.social</groupId>
+      <artifactId>social-component-service</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.social</groupId>
+      <artifactId>social-component-webui</artifactId>
+    </dependency>
 
   </dependencies>
 </project>

@@ -2,6 +2,8 @@ package org.exoplatform.services;
 
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.component.activity.UIBonitaActivity;
+import org.exoplatform.component.activity.UIBonitaActivityBuilder;
 import org.exoplatform.hibernate.dao.CongesAdministrationDAO;
 import org.exoplatform.hibernate.dao.CongesDAO;
 import org.exoplatform.hibernate.model.Conges;
@@ -11,6 +13,11 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.json.JSONObject;
 
 import javax.ws.rs.*;
@@ -27,18 +34,23 @@ import java.util.*;
 @Path("/conges/")
 public class CongesService implements ResourceContainer {
 	
-	  private static final Log LOG = ExoLogger.getLogger(CongesService.class);
+	private static final Log LOG = ExoLogger.getLogger(CongesService.class);
+	static private final String PROVIDER_ID = "organization";
     private CongesDAO congesDAO;
 
     private CongesAdministrationDAO congesAdministrationDAO;
 
     private OrganizationService organizationService;
+    private ActivityManager activityManager;
+    private IdentityManager identityManager;
 
 
-    public CongesService(HibernateService hibernateService, OrganizationService organizationService) {
+    public CongesService(HibernateService hibernateService, OrganizationService organizationService, ActivityManager activityManager,IdentityManager identityManager) {
         congesAdministrationDAO = new CongesAdministrationDAO(hibernateService);
         congesDAO = new CongesDAO(hibernateService);
-        this.organizationService = organizationService;
+        this.activityManager = activityManager;
+        this.identityManager=identityManager;
+        
     }
 
 
@@ -46,6 +58,8 @@ public class CongesService implements ResourceContainer {
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addConges(CongesObject congesObject) throws Exception {
+    	
+    	 ExoSocialActivity activity = new ExoSocialActivityImpl();
         try {
 
             Conges conges = new Conges();
@@ -78,6 +92,26 @@ public class CongesService implements ResourceContainer {
                 congesAdministrationDAO.saveConges(congesAdmin);
 
             }
+            
+            activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
+                    true).getId());
+            
+
+            String oppUrl = "localhost:8980/bonita" + "/" + "00009";
+            String resumee = "@"+congesObject.getUserName() + " demande un nouveau congé, "+" validateur: "+"@"+congesObject.validatorUsername;
+			activity.setTitle(resumee);
+			activity.setType(UIBonitaActivity.ACTIVITY_TYPE);
+			Map<String, String> templateParams = new HashMap<String, String>();
+			templateParams.put(UIBonitaActivityBuilder.USER_NAME_PARAM,congesObject.getUserName());
+			templateParams.put(UIBonitaActivityBuilder.VALIDATOR_NAME_PARAM,congesObject.validatorUsername);
+			templateParams.put(UIBonitaActivityBuilder.REASON_PARAM,congesObject.reason);
+			templateParams.put(UIBonitaActivityBuilder.STARTDATE_PARAM,Long.toString(congesObject.startDate));
+			activity.setTemplateParams(templateParams);
+            activity.setBody("Demande de conge: " +congesObject.getUserName() +" descp: "+congesObject.validatorUsername+" has a rason"+congesObject.reason );
+            Identity identity = identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
+                    true);
+            activityManager.saveActivityNoReturn(identity, activity);
+            
             return Response.ok().build();
         } catch (Exception e) {
             return Response.status(HTTPStatus.INTERNAL_ERROR).build();
@@ -259,6 +293,57 @@ public class CongesService implements ResourceContainer {
             return Response.status(HTTPStatus.INTERNAL_ERROR).build();
         }
     }
+    
+    
+    
+    @POST
+    @Path("/notify")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response notifyConge(CongesObject congesObject) throws Exception {
+    	
+    	 ExoSocialActivity activity = new ExoSocialActivityImpl();
+        try {
+
+            Conges conges = new Conges();
+            conges.setUserName(congesObject.getUserName());
+            conges.setStartDate(new Date(congesObject.getStartDate()));
+            conges.setEndDate(new Date(congesObject.getEndDate()));
+            conges.setFirstDayHalf(congesObject.getIsFirstDayHalf());
+            conges.setEndDayHalf(congesObject.getIsEndDayHalf());
+            conges.setOneDayHalf(congesObject.getOneDayHalf());
+            conges.setNbDays(congesObject.getNbDays());
+            conges.setValidatorUserName(congesObject.getValidatorUsername());
+            conges.setType(congesObject.getType());
+            conges.setReason(congesObject.getReason());            
+            activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
+                    true).getId());
+            
+
+           // String oppUrl = "localhost:8980/bonita" + "/" + "00009";
+            String resumee = "@"+congesObject.getUserName() + " demande un nouveau congé, "+" validateur: "+"@"+congesObject.validatorUsername;
+			activity.setTitle(resumee);
+			activity.setType(UIBonitaActivity.ACTIVITY_TYPE);
+			Map<String, String> templateParams = new HashMap<String, String>();
+			templateParams.put(UIBonitaActivityBuilder.USER_NAME_PARAM,congesObject.getUserName());
+			templateParams.put(UIBonitaActivityBuilder.VALIDATOR_NAME_PARAM,congesObject.validatorUsername);
+			templateParams.put(UIBonitaActivityBuilder.REASON_PARAM,congesObject.reason);
+			templateParams.put(UIBonitaActivityBuilder.STARTDATE_PARAM,Long.toString(congesObject.startDate));
+			templateParams.put(UIBonitaActivityBuilder.ENDDATE_PARAM,Long.toString(congesObject.endDate));
+			templateParams.put(UIBonitaActivityBuilder.NBDAYS_PARAM,Double.toString(congesObject.nbDays));
+			templateParams.put(UIBonitaActivityBuilder.TYPE_PARAM,congesObject.type);
+			
+			activity.setTemplateParams(templateParams);
+            activity.setBody("Demande de conge: " +congesObject.getUserName() +" descp: "+congesObject.validatorUsername+" has a rason"+congesObject.reason );
+            Identity identity = identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
+                    true);
+            activityManager.saveActivityNoReturn(identity, activity);
+            
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.status(HTTPStatus.INTERNAL_ERROR).build();
+        }
+    }
+    
 
 
 

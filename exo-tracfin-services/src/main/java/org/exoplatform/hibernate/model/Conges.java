@@ -9,6 +9,11 @@ import java.util.Date;
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 06/04/16.
  */
 
+/**
+ * modified by Ahmed Zaoui (azaoui@exoplatform.com) 27/07/16
+ *
+ */
+
 @Entity
 public class Conges {
 

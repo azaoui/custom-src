@@ -31,6 +31,10 @@ import java.util.*;
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 06/04/16.
  */
+/**
+ * modified by Ahmed Zaoui (azaoui@exoplatform.com) 27/07/16
+ *
+ */
 @Path("/conges/")
 public class CongesService implements ResourceContainer {
 	
@@ -59,7 +63,6 @@ public class CongesService implements ResourceContainer {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addConges(CongesObject congesObject) throws Exception {
     	
-    	 ExoSocialActivity activity = new ExoSocialActivityImpl();
         try {
 
             Conges conges = new Conges();
@@ -92,25 +95,6 @@ public class CongesService implements ResourceContainer {
                 congesAdministrationDAO.saveConges(congesAdmin);
 
             }
-            
-            activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
-                    true).getId());
-            
-
-            String oppUrl = "localhost:8980/bonita" + "/" + "00009";
-            String resumee = "@"+congesObject.getUserName() + " demande un nouveau congé, "+" validateur: "+"@"+congesObject.validatorUsername;
-			activity.setTitle(resumee);
-			activity.setType(UIBonitaActivity.ACTIVITY_TYPE);
-			Map<String, String> templateParams = new HashMap<String, String>();
-			templateParams.put(UIBonitaActivityBuilder.USER_NAME_PARAM,congesObject.getUserName());
-			templateParams.put(UIBonitaActivityBuilder.VALIDATOR_NAME_PARAM,congesObject.validatorUsername);
-			templateParams.put(UIBonitaActivityBuilder.REASON_PARAM,congesObject.reason);
-			templateParams.put(UIBonitaActivityBuilder.STARTDATE_PARAM,Long.toString(congesObject.startDate));
-			activity.setTemplateParams(templateParams);
-            activity.setBody("Demande de conge: " +congesObject.getUserName() +" descp: "+congesObject.validatorUsername+" has a rason"+congesObject.reason );
-            Identity identity = identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
-                    true);
-            activityManager.saveActivityNoReturn(identity, activity);
             
             return Response.ok().build();
         } catch (Exception e) {
@@ -299,42 +283,36 @@ public class CongesService implements ResourceContainer {
     @POST
     @Path("/notify")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response notifyConge(CongesObject congesObject) throws Exception {
+    public Response notifyConge(ValidationObject validationObject) throws Exception {
     	
     	 ExoSocialActivity activity = new ExoSocialActivityImpl();
         try {
 
-            Conges conges = new Conges();
-            conges.setUserName(congesObject.getUserName());
-            conges.setStartDate(new Date(congesObject.getStartDate()));
-            conges.setEndDate(new Date(congesObject.getEndDate()));
-            conges.setFirstDayHalf(congesObject.getIsFirstDayHalf());
-            conges.setEndDayHalf(congesObject.getIsEndDayHalf());
-            conges.setOneDayHalf(congesObject.getOneDayHalf());
-            conges.setNbDays(congesObject.getNbDays());
-            conges.setValidatorUserName(congesObject.getValidatorUsername());
-            conges.setType(congesObject.getType());
-            conges.setReason(congesObject.getReason());            
-            activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
+     
+            activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, validationObject.userName,
                     true).getId());
             
 
            // String oppUrl = "localhost:8980/bonita" + "/" + "00009";
-            String resumee = "@"+congesObject.getUserName() + " demande un nouveau congé, "+" validateur: "+"@"+congesObject.validatorUsername;
+            String resumee = "@"+validationObject.getUserName() + " demande un nouveau congé, "+" validateur: "+"@"+validationObject.validatorUsername;
 			activity.setTitle(resumee);
 			activity.setType(UIBonitaActivity.ACTIVITY_TYPE);
 			Map<String, String> templateParams = new HashMap<String, String>();
-			templateParams.put(UIBonitaActivityBuilder.USER_NAME_PARAM,congesObject.getUserName());
-			templateParams.put(UIBonitaActivityBuilder.VALIDATOR_NAME_PARAM,congesObject.validatorUsername);
-			templateParams.put(UIBonitaActivityBuilder.REASON_PARAM,congesObject.reason);
-			templateParams.put(UIBonitaActivityBuilder.STARTDATE_PARAM,Long.toString(congesObject.startDate));
-			templateParams.put(UIBonitaActivityBuilder.ENDDATE_PARAM,Long.toString(congesObject.endDate));
-			templateParams.put(UIBonitaActivityBuilder.NBDAYS_PARAM,Double.toString(congesObject.nbDays));
-			templateParams.put(UIBonitaActivityBuilder.TYPE_PARAM,congesObject.type);
+			templateParams.put(UIBonitaActivityBuilder.USER_NAME_PARAM,validationObject.getUserName());
+			templateParams.put(UIBonitaActivityBuilder.VALIDATOR_NAME_PARAM,validationObject.validatorUsername);
+			templateParams.put(UIBonitaActivityBuilder.REASON_PARAM,validationObject.reason);
+			templateParams.put(UIBonitaActivityBuilder.STARTDATE_PARAM,Long.toString(validationObject.startDate));
+			templateParams.put(UIBonitaActivityBuilder.ENDDATE_PARAM,Long.toString(validationObject.endDate));
+			templateParams.put(UIBonitaActivityBuilder.NBDAYS_PARAM,Double.toString(validationObject.nbDays));
+			templateParams.put(UIBonitaActivityBuilder.TYPE_PARAM,validationObject.type);
+			templateParams.put(UIBonitaActivityBuilder.IS_APPROVED_PARAM,Boolean.toString(validationObject.isApprouved));
+			templateParams.put(UIBonitaActivityBuilder.REFUSAL_REASON,validationObject.refusalReason);
+			templateParams.put(UIBonitaActivityBuilder.STATE,validationObject.state);
+			templateParams.put(UIBonitaActivityBuilder.SUPER_VALIDATOR_USER_NAME, validationObject.superValidatorUsername);
 			
 			activity.setTemplateParams(templateParams);
-            activity.setBody("Demande de conge: " +congesObject.getUserName() +" descp: "+congesObject.validatorUsername+" has a rason"+congesObject.reason );
-            Identity identity = identityManager.getOrCreateIdentity(PROVIDER_ID, congesObject.userName,
+            activity.setBody("Demande de conge: " +validationObject.getUserName() +" descp: "+validationObject.validatorUsername+" has a rason"+validationObject.reason );
+            Identity identity = identityManager.getOrCreateIdentity(PROVIDER_ID, validationObject.userName,
                     true);
             activityManager.saveActivityNoReturn(identity, activity);
             
@@ -524,5 +502,135 @@ public class CongesService implements ResourceContainer {
             this.value = value;
         }
     }
+    public static class ValidationObject {
+    	
+    	public ValidationObject() {
 
+        }
+    	
+		public ValidationObject(String userName, long startDate, long endDate,
+				boolean isFirstDayHalf, boolean isEndDayHalf,
+				String oneDayHalf, String validatorUsername, double nbDays,
+				String type, String reason, boolean isApprouved,
+				String refusalReason, String state,String superValidatorUsername) {
+			this.userName = userName;
+			this.startDate = startDate;
+			this.endDate = endDate;
+			this.isFirstDayHalf = isFirstDayHalf;
+			this.isEndDayHalf = isEndDayHalf;
+			this.oneDayHalf = oneDayHalf;
+			this.validatorUsername = validatorUsername;
+			this.nbDays = nbDays;
+			this.type = type;
+			this.reason = reason;
+			this.isApprouved = isApprouved;
+			this.refusalReason = refusalReason;
+			this.state=state;
+			this.superValidatorUsername=superValidatorUsername;
+		}
+		private String userName;
+        private long startDate;
+        private long endDate;
+        private boolean isFirstDayHalf;
+        private boolean isEndDayHalf;
+        private String oneDayHalf;
+        private String validatorUsername;
+        private double nbDays;
+        private String type;
+        private String reason;
+        private boolean isApprouved;
+        private String refusalReason;
+        private String state;
+        private String superValidatorUsername;
+        public String getUserName() {
+			return userName;
+		}
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+		public long getStartDate() {
+			return startDate;
+		}
+		public void setStartDate(long startDate) {
+			this.startDate = startDate;
+		}
+		public long getEndDate() {
+			return endDate;
+		}
+		public void setEndDate(long endDate) {
+			this.endDate = endDate;
+		}
+		public boolean isFirstDayHalf() {
+			return isFirstDayHalf;
+		}
+		public void setFirstDayHalf(boolean isFirstDayHalf) {
+			this.isFirstDayHalf = isFirstDayHalf;
+		}
+		public boolean isEndDayHalf() {
+			return isEndDayHalf;
+		}
+		public void setEndDayHalf(boolean isEndDayHalf) {
+			this.isEndDayHalf = isEndDayHalf;
+		}
+		public String getOneDayHalf() {
+			return oneDayHalf;
+		}
+		public void setOneDayHalf(String oneDayHalf) {
+			this.oneDayHalf = oneDayHalf;
+		}
+		public String getValidatorUsername() {
+			return validatorUsername;
+		}
+		public void setValidatorUsername(String validatorUsername) {
+			this.validatorUsername = validatorUsername;
+		}
+		public double getNbDays() {
+			return nbDays;
+		}
+		public void setNbDays(double nbDays) {
+			this.nbDays = nbDays;
+		}
+		public String getType() {
+			return type;
+		}
+		public void setType(String type) {
+			this.type = type;
+		}
+		public String getReason() {
+			return reason;
+		}
+		public void setReason(String reason) {
+			this.reason = reason;
+		}
+		public boolean isApprouved() {
+			return isApprouved;
+		}
+		public void setApprouved(boolean isApprouved) {
+			this.isApprouved = isApprouved;
+		}
+		public String getRefusalReason() {
+			return refusalReason;
+		}
+		public void setRefusalReason(String refusalReason) {
+			this.refusalReason = refusalReason;
+		}
+
+		public String getState() {
+			return state;
+		}
+
+		public void setState(String state) {
+			this.state = state;
+		}
+
+		public String getSuperValidatorUsername() {
+			return superValidatorUsername;
+		}
+
+		public void setSuperValidatorUsername(String superValidatorUsername) {
+			this.superValidatorUsername = superValidatorUsername;
+		}
+
+    	
+    }
 }

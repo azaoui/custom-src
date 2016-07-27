@@ -6,6 +6,10 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 
 
+/**
+ * @author azaoui@exoplatform.com
+ *
+ */
 @ComponentConfig(
         lifecycle = UIFormLifecycle.class,
         template = "classpath:groovy/social/webui/activity/UIBonitaActivity.gtmpl",
@@ -30,6 +34,10 @@ public class UIBonitaActivity extends BaseUIActivity {
 	    private String endDate = "";
 	    private String nbDays = "";
 	    private String type = "";
+	    private String isApproved = "";
+	    private String refusalReason="";
+	    private String state="";
+	    private String superValidatorUsername="";
 
 	    
 		public String getUserName() {
@@ -73,6 +81,30 @@ public class UIBonitaActivity extends BaseUIActivity {
 		}
 		public void setType(String type) {
 			this.type = type;
+		}
+		public String getIsApproved() {
+			return isApproved;
+		}
+		public void setIsApproved(String isApproved) {
+			this.isApproved = isApproved;
+		}
+		public String getRefusalReason() {
+			return refusalReason;
+		}
+		public void setRefusalReason(String refusalReason) {
+			this.refusalReason = refusalReason;
+		}
+		public String getState() {
+			return state;
+		}
+		public void setState(String state) {
+			this.state = state;
+		}
+		public String getSuperValidatorUsername() {
+			return superValidatorUsername;
+		}
+		public void setSuperValidatorUsername(String superValidatorUsername) {
+			this.superValidatorUsername = superValidatorUsername;
 		}
 
 

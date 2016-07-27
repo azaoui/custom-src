@@ -245,8 +245,6 @@
                     <br />
                     <h7><strong>nombre de jours : </strong><em>$nbDays</em></h7>
                     <br />
-                    <h7><strong>Validateur : </strong><em>$validatorUserName</em></h7>
-                    <br />
                      <h7><strong>Type de congé : </strong><em>$type</em></h7>
                     <br /> 
                     <h7><strong>Motif du congé : </strong><em>$reason</em></h7>
@@ -254,14 +252,21 @@
                      <h7><strong>Date Début  : </strong><em>$theStartDate</em></h7>
                     <br />
                     <h7><strong>Date fin  : </strong><em>$theEndDate</em></h7><br />
-                    <h7><strong>State  : </strong><em>$state</em></h7>
+                     <% if (state.equals("init")) { %>
+                      <h7 style="color: red;"> <strong>Statut  : </strong><em>en cours de traitement..</em></h7>
                     <br />
-                      <h7><strong>superValidatorUsername  : </strong><em>$superValidatorUsername</em></h7>
-                    <br />  
-                    <h7 style="color: red;"><strong>Statut  : </strong><em>$isApproved</em></h7>
+                     <% } else if (state.equals("refused")) { %>
+                      <h7 style="color: red;"> <strong>Statut  : </strong><em>refusé</em></h7>
                     <br />
-                                                              <h7><strong>Raison  : </strong><em>$refusalReason</em></h7>
+                                                              <h7><strong>Motif de refus  : </strong><em>$refusalReason</em></h7>
                     <br />
+                     
+                     <% } else if (state.equals("valider")) { %>
+                                           <h7 style="color: red;"> <strong>Statut  : </strong><em>Demande de congé acceptée</em></h7>
+                    <br />
+                     
+                      <% } %>
+
                     
 			</div><!--end description-->
 			<div class="actionBar clearfix ">

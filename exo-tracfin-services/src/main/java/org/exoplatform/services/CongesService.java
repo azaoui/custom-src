@@ -292,9 +292,11 @@ public class CongesService implements ResourceContainer {
             activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, validationObject.userName,
                     true).getId());
             
-
-           // String oppUrl = "localhost:8980/bonita" + "/" + "00009";
-            String resumee = "@"+validationObject.getUserName() + " demande un nouveau congé, "+" validateur: "+"@"+validationObject.validatorUsername;
+			String resumee = "Demande de congé."
+					+ "<br/>"
+					+ "Demandeur : " + " @" + validationObject.userName
+					+ " Validateur : " + "@"
+					+ validationObject.validatorUsername;
 			activity.setTitle(resumee);
 			activity.setType(UIBonitaActivity.ACTIVITY_TYPE);
 			Map<String, String> templateParams = new HashMap<String, String>();

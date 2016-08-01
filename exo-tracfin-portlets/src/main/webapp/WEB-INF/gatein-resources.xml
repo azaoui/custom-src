@@ -18,6 +18,14 @@
   </portal-skin>
 
   <portlet-skin>
+    <application-name>CongesApplication</application-name>
+    <portlet-name>CongesApplication</portlet-name>
+    <skin-name>Default</skin-name>
+    <css-path>/css/datatable.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+  
+    <portlet-skin>
     <application-name>CongesAdministrationApplication</application-name>
     <portlet-name>CongesAdministrationApplication</portlet-name>
     <skin-name>Default</skin-name>
@@ -41,10 +49,39 @@
       </depends>
     </module>
   </portlet>
+  
+    <portlet>
+    <name>CongesApplication</name>
+    <module>
+      <depends>
+        <module>CongesApplication</module>
+      </depends>
+      <depends>
+        <module>search</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+      </depends>
+    </module>
+  </portlet>
 
 
 
   <module>
+    <name>CongesApplication</name>
+    <script>
+      <path>/js/CongesAdministration/CongesApplication.js</path>
+    </script>
+    <depends>
+      <module>search</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+  </module>
+  
+    <module>
     <name>congeAdmin</name>
     <script>
       <path>/js/CongesAdministration/congeAdmin.js</path>
@@ -60,6 +97,22 @@
 
   <module>
     <name>jQueryDatatables</name>
+    <script>
+      <adapter>
+        (function() {
+        <include>/js/CongesAdministration/dataTables-min.js</include>
+        return jQuery.noConflict(true);
+        })();
+      </adapter>
+    </script>
+    <depends>
+      <module>jquery</module>
+      <as>jQuery</as>
+    </depends>
+  </module>
+  
+    <module>
+    <name>search</name>
     <script>
       <adapter>
         (function() {

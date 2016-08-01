@@ -54,6 +54,7 @@ public class CongesService implements ResourceContainer {
         congesDAO = new CongesDAO(hibernateService);
         this.activityManager = activityManager;
         this.identityManager=identityManager;
+        this.organizationService=organizationService;
         
     }
 
@@ -213,7 +214,9 @@ public class CongesService implements ResourceContainer {
             }
 
 
-            return Response.ok(result, MediaType.APPLICATION_JSON).build();
+            return Response.ok(result, MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*")
+            	      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+            	      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
         } catch (Exception e) {
             return Response.status(HTTPStatus.INTERNAL_ERROR).build();
         }

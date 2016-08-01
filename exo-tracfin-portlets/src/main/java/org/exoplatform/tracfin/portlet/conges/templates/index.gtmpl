@@ -31,7 +31,9 @@
         </tr>
 
 
-
+<div class="row-fluid span12">
+    <input type="text" id="searchFilter" placeholder="Type to filter" />
+</div>
 
     <table
 

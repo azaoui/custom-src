@@ -374,7 +374,101 @@ public class CongesService implements ResourceContainer {
         }
     }
 
-
+    @GET
+    @Path("/getAllUsers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllUsers() throws Exception {
+        try{
+        	
+        	//"enabled":"true","userName":"deploy","password":"deploy","password_confirm":"deploy","firstname":"Deploy","lastname":"User"
+        	 List<BonitaUser> result = new ArrayList<BonitaUser>();
+        	
+        	Set<String> userNames = new HashSet<String>();
+        	  ListAccess< org.exoplatform.services.organization.User> allUsers = organizationService.getUserHandler().findAllUsers();
+              int size = allUsers.getSize();
+              int pageSize = 10;
+              int i = 0;
+              while (i < size) {
+                int length = (size - i >= pageSize) ? pageSize : size - i;
+                org.exoplatform.services.organization.User[] users = allUsers.load(i, length);
+                for ( org.exoplatform.services.organization.User user : users) {
+                 // userNames.add(user.getUserName());
+                	//(boolean enabled, String userName, String password,
+    				//String password_confirm, String firstname)
+                	result.add(new BonitaUser(true,user.getUserName(),"bpm","bpm",user.getFirstName(),user.getLastName()));
+                }
+                i += pageSize;
+              }
+             
+        	
+              return Response.ok(result, MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*")
+            	      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+            	      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
+        } catch (Exception e) {
+            return Response.status(HTTPStatus.INTERNAL_ERROR).build();
+        }
+    }
+    
+    
+    
+    
+    public static class BonitaUser{
+    	
+    	
+    	//"enabled":"true","userName":"deploy","password":"deploy","password_confirm":"deploy","firstname":"Deploy","lastname":"User"
+    	private boolean enabled;
+    	public BonitaUser(boolean enabled, String userName, String password,
+				String password_confirm, String firstname, String lastname) {
+			this.enabled = enabled;
+			this.userName = userName;
+			this.password = password;
+			this.password_confirm = password_confirm;
+			this.firstname = firstname;
+			this.lastname = lastname;
+		}
+		private String userName;
+        private String password;
+        private String password_confirm;
+        private String firstname;
+        private String lastname;
+		public String getLastname() {
+			return lastname;
+		}
+		public void setLastname(String lastname) {
+			this.lastname = lastname;
+		}
+		public boolean isEnabled() {
+			return enabled;
+		}
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+		public String getUserName() {
+			return userName;
+		}
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+		public String getPassword() {
+			return password;
+		}
+		public void setPassword(String password) {
+			this.password = password;
+		}
+		public String getPassword_confirm() {
+			return password_confirm;
+		}
+		public void setPassword_confirm(String password_confirm) {
+			this.password_confirm = password_confirm;
+		}
+		public String getFirstname() {
+			return firstname;
+		}
+		public void setFirstname(String firstname) {
+			this.firstname = firstname;
+		}
+    }
+    
     public static class CongesObject{
         private String userName;
         private long startDate;

@@ -12,6 +12,7 @@ import org.exoplatform.services.database.HibernateService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
@@ -404,6 +405,61 @@ public class CongesService implements ResourceContainer {
               return Response.ok(result, MediaType.APPLICATION_JSON).header("Access-Control-Allow-Origin", "*")
             	      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
             	      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With").build();
+        } catch (Exception e) {
+            return Response.status(HTTPStatus.INTERNAL_ERROR).build();
+        }
+    }
+    
+    
+    
+    
+    @GET
+    @Path("/syncroValidator")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response syncroValidator() throws Exception {
+        try{
+        	
+        	String groupId=System.getProperty("exo.bonita.group");
+        	ListAccess<User> validatorsUsers;
+        	List<CongesAdministration> congesAdministrations;
+        	
+        	if(groupId==null){
+        		  return Response.status(HTTPStatus.NOT_FOUND).build();
+        		
+        	}
+        	try {
+        		validatorsUsers = organizationService.getUserHandler().findUsersByGroupId("/platform/"+groupId);
+        	
+			} catch (Exception e) {
+				return Response.status(HTTPStatus.INTERNAL_ERROR).build();
+			}
+        	
+        	
+        	
+        
+        int size = validatorsUsers.getSize();
+        int pageSize = 10;
+        int i = 0;
+        while (i < size) {
+          int length = (size - i >= pageSize) ? pageSize : size - i;
+          org.exoplatform.services.organization.User[] users = validatorsUsers.load(i, length);
+          for ( org.exoplatform.services.organization.User user : users) {
+        	  
+        	  congesAdministrations = getCongesAdministrationByUsername(user.getUserName());
+        	  if (congesAdministrations.size() == 0) {
+               	createCongesAdministration(user.getUserName(), 00d, 00d, 00d, true);
+         	
+              }
+          }
+          i += pageSize;
+        }
+        
+            
+  
+
+             
+        	
+              return Response.ok().build();
         } catch (Exception e) {
             return Response.status(HTTPStatus.INTERNAL_ERROR).build();
         }

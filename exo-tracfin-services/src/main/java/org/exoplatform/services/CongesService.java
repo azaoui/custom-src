@@ -295,8 +295,8 @@ public class CongesService implements ResourceContainer {
             activity.setUserId(identityManager.getOrCreateIdentity(PROVIDER_ID, validationObject.userName,
                     true).getId());
             
-           String  currentValidator= (validationObject.superValidatorUsername.length()>0)  ? validationObject.superValidatorUsername :validationObject.userName ;
-            
+           //String  currentValidator= (validationObject.superValidatorUsername.length()>0)  ? validationObject.superValidatorUsername :validationObject.userName ;
+            String  currentValidator= validationObject.validatorUsername ;
 			String resumee = "Demande de congé."
 					+ "<br/>"
 					+ "Demandeur : " + " @" + validationObject.userName
